@@ -1,0 +1,103 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1e1e1e;
+  color: #ffffff;
+}
+
+.title {
+  text-align: center;
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #2b2b2b;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+img {
+  width: 150px;
+  height: 15px;
+}
+
+.data {
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #2b2b2b;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+}
+
+.lines {
+  display: flex;
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  /*border: solid green;*/
+  margin: 20px auto;
+}
+
+.columms {
+  /*border: solid blue;*/
+  flex: 1; /* Added to make columns fill the available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+  align-items: center; /* Center content horizontally */
+}
+
+.input-columm {
+  width: 60px;
+  height: 25px;
+  border: solid black;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 1.2rem;
+  text-align: center; /* Center the text inside the input */
+}
+
+::placeholder {
+  color: #c2c2c2;
+}
+
+#A, #C {
+  margin-right: -30px;
+}
+
+#B, #X {
+  margin-left: -30px;
+}
+
+#X {
+  border: solid black 5px;
+  width: 60px;
+  height: 25px;
+  font-weight: bold;
+  color: black;
+}
+
+.button-box {
+  max-width: 440px;
+  margin: 20px auto;
+  padding: 0px;
+  border-radius: 8px;
+  background-color: #2b2b2b;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);  
+}
+
+button {
+  width: 99%;
+  margin-left: 0.5%;
+  margin-right: 0.5%;
+  padding: 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+}

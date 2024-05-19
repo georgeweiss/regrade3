@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regra de 3</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+</head>
+<body>
+  <div class="title">
+    <h1>Regra de 3</h1>
+  </div>
+  
+  <div class="data">
+    <div class="lines">
+      <div class="columms">
+        <label for="income1"></label>
+        <input class="input-columm" type="number" id="A" required oninput="calculate()" placeholder="1" inputmode="numeric">
+      </div>
+
+      <img src="seta.png">
+      
+      <div class="columms">
+        <label for="expenses1"></label>
+        <input class="input-columm" type="number" id="B" required oninput="calculate()" placeholder="2" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="lines">
+      <div class="columms">
+        <label for="income1"></label>
+        <input class="input-columm" type="number" id="C" required oninput="calculate()" placeholder="3" inputmode="numeric">
+      </div>
+      
+      <img src="seta.png">
+      
+      <div class="columms">
+        <label for="expenses1"></label>
+        <div class="input-columm" id="X" required>X</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="button-box">
+  <button onclick="reset()">Reset</button>
+  </div>
+  
+</body>
+</html>
