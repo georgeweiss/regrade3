@@ -1,50 +1,505 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Regra de 3</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Regra de 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+background: #080808 !important;
+min-height: 100vh;
+font-family: ‘Syne’, sans-serif;
+display: flex;
+align-items: center;
+justify-content: center;
+overflow-x: hidden;
+}
+
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background:
+radial-gradient(ellipse 55% 40% at 30% 10%, rgba(200,210,230,0.05) 0%, transparent 60%),
+radial-gradient(ellipse 40% 50% at 70% 90%, rgba(180,190,210,0.04) 0%, transparent 60%);
+pointer-events: none;
+z-index: 0;
+}
+
+.card {
+position: relative;
+z-index: 1;
+width: min(420px, 96vw);
+background: #0e0e0e;
+border: 1px solid #252525;
+border-radius: 24px;
+padding: 32px 24px 28px;
+box-shadow: 0 40px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.04);
+animation: rise 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+@keyframes rise {
+from { opacity: 0; transform: translateY(24px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+.badge {
+display: inline-block;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.18em;
+color: #a0aec0;
+background: rgba(160,174,192,0.08);
+border: 1px solid rgba(160,174,192,0.18);
+border-radius: 100px;
+padding: 4px 12px;
+margin-bottom: 14px;
+}
+
+.title-block {
+margin-bottom: 28px;
+text-align: center;
+}
+
+h1 {
+font-size: 34px;
+font-weight: 800;
+letter-spacing: -0.02em;
+line-height: 1.1;
+margin-bottom: 4px;
+background: linear-gradient(135deg, #ffffff 0%, #c8d0e0 40%, #8a9ab8 70%, #d0d8e8 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+filter: drop-shadow(0 0 12px rgba(200,208,230,0.2));
+}
+
+.subtitle {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px;
+color: #333;
+letter-spacing: 0.08em;
+}
+
+.rows-wrap {
+display: grid;
+grid-template-columns: 1fr 40px 1fr;
+grid-template-rows: auto auto;
+row-gap: 12px;
+margin-bottom: 20px;
+}
+
+.field-wrap {
+display: flex;
+flex-direction: column;
+gap: 5px;
+min-width: 0;
+position: relative;
+}
+
+.field-label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+letter-spacing: 0.12em;
+color: #383838;
+padding-left: 2px;
+white-space: nowrap;
+}
+
+.display-field {
+width: 100%;
+min-width: 0;
+background: #141414;
+border: 1.5px solid #222;
+border-radius: 12px;
+color: #e8ecf4;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 20px;
+font-weight: 700;
+padding: 13px 10px;
+text-align: center;
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+cursor: pointer;
+user-select: none;
+transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+min-height: 54px;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.display-field.active {
+border-color: #8a9ab8;
+background: #101010;
+box-shadow: 0 0 0 3px rgba(138,154,184,0.12), 0 0 16px rgba(200,208,230,0.06);
+}
+
+.display-field.result-field {
+background: linear-gradient(135deg, #0f1218, #131720);
+border-color: #1e2535;
+color: #c8d4f0;
+cursor: default;
+}
+
+.display-field.result-field.has-value {
+color: #e0eaff;
+border-color: #2a3550;
+box-shadow: 0 0 20px rgba(160,180,230,0.08);
+text-shadow: 0 0 20px rgba(200,220,255,0.3);
+}
+
+.arrow-col {
+display: flex;
+align-items: center;
+justify-content: center;
+padding-top: 21px;
+}
+
+.x-badge {
+position: absolute;
+top: -2px;
+right: -2px;
+width: 18px;
+height: 18px;
+background: linear-gradient(135deg, #c8d4f0, #8a9ab8);
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 9px;
+font-weight: 700;
+color: #080808;
+z-index: 2;
+box-shadow: 0 0 8px rgba(200,212,240,0.3);
+}
+
+/* Result panel */
+.result-display {
+margin-bottom: 16px;
+background: linear-gradient(135deg, #0f1218, #131720);
+border: 1px solid #1e2535;
+border-radius: 14px;
+padding: 14px 18px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+opacity: 0;
+transform: translateY(6px);
+transition: opacity 0.3s, transform 0.3s;
+}
+
+.result-display.visible {
+opacity: 1;
+transform: translateY(0);
+}
+
+.result-display .label {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 11px;
+color: #8a9ab8;
+letter-spacing: 0.1em;
+flex-shrink: 0;
+}
+
+.result-display .value {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 24px;
+font-weight: 700;
+background: linear-gradient(135deg, #ffffff, #c8d4f0);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+text-align: right;
+word-break: break-all;
+min-width: 0;
+filter: drop-shadow(0 0 8px rgba(200,210,240,0.2));
+}
+
+/* Numpad */
+.numpad {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 8px;
+margin-bottom: 16px;
+}
+
+.numpad-row-wide {
+grid-column: span 3;
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+}
+
+.key {
+background: #161616;
+border: 1px solid #222;
+border-radius: 10px;
+color: #c8d0e0;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 18px;
+font-weight: 700;
+padding: 14px 0;
+text-align: center;
+cursor: pointer;
+user-select: none;
+transition: background 0.1s, transform 0.08s, border-color 0.1s;
+-webkit-tap-highlight-color: transparent;
+}
+
+.key:active, .key.pressed {
+background: #222;
+border-color: #8a9ab8;
+transform: scale(0.95);
+color: #fff;
+}
+
+.key.key-dot {
+font-size: 22px;
+color: #8a9ab8;
+}
+
+.key.key-del {
+color: #8a9ab8;
+font-size: 15px;
+letter-spacing: 0;
+}
+
+.key.key-zero {
+grid-column: span 1;
+}
+
+.btn-reset {
+width: 100%;
+padding: 15px;
+background: linear-gradient(135deg, #1e2535, #252d40);
+border: 1px solid #2a3550;
+border-radius: 14px;
+font-family: ‘Syne’, sans-serif;
+font-size: 15px;
+font-weight: 700;
+color: #8a9ab8;
+letter-spacing: 0.06em;
+cursor: pointer;
+transition: transform 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s;
+}
+
+.btn-reset:hover {
+background: linear-gradient(135deg, #252d40, #2e3850);
+color: #c8d4f0;
+box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+transform: translateY(-1px);
+}
+
+.btn-reset:active {
+transform: translateY(0);
+}
+
+.formula {
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 10px;
+color: #252525;
+text-align: center;
+margin-top: 14px;
+letter-spacing: 0.05em;
+}
+
+/* Active field indicator */
+.field-label.active-label {
+color: #8a9ab8;
+}
+</style>
+
 </head>
 <body>
-  <div class="title">
+
+<div class="card">
+  <div class="badge">CALCULADORA</div>
+
+  <div class="title-block">
     <h1>Regra de 3</h1>
+    <p class="subtitle">PROPORCIONALIDADE SIMPLES</p>
   </div>
-  
-  <div class="data">
-    <div class="lines">
-      <div class="columms">
-        <label for="income1"></label>
-        <input class="input-columm" type="number" id="A" required oninput="calculate()" placeholder="1" inputmode="numeric">
-      </div>
 
-      <img src="seta.png">
-      
-      <div class="columms">
-        <label for="expenses1"></label>
-        <input class="input-columm" type="number" id="B" required oninput="calculate()" placeholder="2" inputmode="numeric">
-      </div>
+  <div class="rows-wrap">
+    <!-- Row 1 -->
+    <div class="field-wrap">
+      <span class="field-label" id="lbl-a">VALOR A</span>
+      <div class="display-field" id="disp-a" onclick="setActive('a')">—</div>
     </div>
 
-    <div class="lines">
-      <div class="columms">
-        <label for="income1"></label>
-        <input class="input-columm" type="number" id="C" required oninput="calculate()" placeholder="3" inputmode="numeric">
-      </div>
-      
-      <img src="seta.png">
-      
-      <div class="columms">
-        <label for="expenses1"></label>
-        <div class="input-columm" id="X" required>X</div>
-      </div>
-    </div>
+```
+<div class="arrow-col">
+  <svg width="28" height="18" viewBox="0 0 28 18" fill="none">
+    <line x1="2" y1="9" x2="21" y2="9" stroke="#8a9ab8" stroke-width="2" stroke-linecap="round"/>
+    <polyline points="15,3 23,9 15,15" fill="none" stroke="#8a9ab8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<div class="field-wrap">
+  <span class="field-label" id="lbl-b">VALOR B</span>
+  <div class="display-field" id="disp-b" onclick="setActive('b')">—</div>
+</div>
+
+<!-- Row 2 -->
+<div class="field-wrap">
+  <span class="field-label" id="lbl-c">VALOR C</span>
+  <div class="display-field" id="disp-c" onclick="setActive('c')">—</div>
+</div>
+
+<div class="arrow-col">
+  <svg width="28" height="18" viewBox="0 0 28 18" fill="none">
+    <line x1="2" y1="9" x2="21" y2="9" stroke="#8a9ab8" stroke-width="2" stroke-linecap="round"/>
+    <polyline points="15,3 23,9 15,15" fill="none" stroke="#8a9ab8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</div>
+
+<div class="field-wrap">
+  <div class="x-badge">X</div>
+  <span class="field-label">RESULTADO X</span>
+  <div class="display-field result-field" id="disp-x">—</div>
+</div>
+```
+
   </div>
-  
-  <div class="button-box">
-  <button onclick="reset()">Reset</button>
+
+  <div class="result-display" id="resultBox">
+    <span class="label">X =</span>
+    <span class="value" id="resultVal">—</span>
   </div>
-  
+
+  <!-- Numpad -->
+
+  <div class="numpad" id="numpad">
+    <div class="key" onclick="pressKey('7')">7</div>
+    <div class="key" onclick="pressKey('8')">8</div>
+    <div class="key" onclick="pressKey('9')">9</div>
+    <div class="key" onclick="pressKey('4')">4</div>
+    <div class="key" onclick="pressKey('5')">5</div>
+    <div class="key" onclick="pressKey('6')">6</div>
+    <div class="key" onclick="pressKey('1')">1</div>
+    <div class="key" onclick="pressKey('2')">2</div>
+    <div class="key" onclick="pressKey('3')">3</div>
+    <div class="key key-zero" onclick="pressKey('0')">0</div>
+    <div class="key key-dot" onclick="pressKey('.')">.</div>
+    <div class="key key-del" onclick="pressKey('del')">⌫</div>
+  </div>
+
+<button class="btn-reset" onclick="resetAll()">Limpar Tudo</button>
+
+  <p class="formula">x = (b x c) / a</p>
+</div>
+
+<script>
+  const fields = ['a', 'b', 'c'];
+  const values = { a: '', b: '', c: '' };
+  let activeField = 'a';
+
+  function setActive(field) {
+    activeField = field;
+    fields.forEach(f => {
+      const disp = document.getElementById('disp-' + f);
+      const lbl = document.getElementById('lbl-' + f);
+      if (f === field) {
+        disp.classList.add('active');
+        lbl.classList.add('active-label');
+      } else {
+        disp.classList.remove('active');
+        lbl.classList.remove('active-label');
+      }
+    });
+  }
+
+  function pressKey(key) {
+    // animate key
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(k => {
+      if (k.textContent.trim() === key || (key === 'del' && k.classList.contains('key-del'))) {
+        k.classList.add('pressed');
+        setTimeout(() => k.classList.remove('pressed'), 120);
+      }
+    });
+
+    let val = values[activeField];
+
+    if (key === 'del') {
+      val = val.slice(0, -1);
+    } else if (key === '.') {
+      if (val.includes('.')) return;
+      if (val === '') val = '0';
+      val += '.';
+    } else {
+      const next = val === '0' ? key : val + key;
+      if (next.replace('.', '').length > 12) return; // max 12 digits
+      val = next;
+    }
+
+    values[activeField] = val;
+    updateDisplay(activeField);
+    calc();
+  }
+
+  function updateDisplay(field) {
+    const disp = document.getElementById('disp-' + field);
+    const val = values[field];
+    disp.textContent = val === '' ? '—' : val;
+  }
+
+  function parseVal(v) {
+    return parseFloat(v.replace(',', '.'));
+  }
+
+  function formatResult(num) {
+    if (Number.isInteger(num)) return num.toString();
+    // up to 4 decimal places, strip trailing zeros
+    return parseFloat(num.toFixed(4)).toString();
+  }
+
+  function calc() {
+    const a = parseVal(values.a);
+    const b = parseVal(values.b);
+    const c = parseVal(values.c);
+    const xDisp = document.getElementById('disp-x');
+    const resultBox = document.getElementById('resultBox');
+    const resultVal = document.getElementById('resultVal');
+
+    const aOk = values.a !== '' && !isNaN(a) && a !== 0;
+    const bOk = values.b !== '' && !isNaN(b);
+    const cOk = values.c !== '' && !isNaN(c);
+
+    if (aOk && bOk && cOk) {
+      const x = (b * c) / a;
+      const formatted = formatResult(x);
+      xDisp.textContent = formatted;
+      xDisp.classList.add('has-value');
+      resultVal.textContent = formatted;
+      resultBox.classList.add('visible');
+    } else {
+      xDisp.textContent = '—';
+      xDisp.classList.remove('has-value');
+      resultBox.classList.remove('visible');
+    }
+  }
+
+  function resetAll() {
+    values.a = ''; values.b = ''; values.c = '';
+    fields.forEach(f => updateDisplay(f));
+    document.getElementById('disp-x').textContent = '—';
+    document.getElementById('disp-x').classList.remove('has-value');
+    document.getElementById('resultBox').classList.remove('visible');
+    setActive('a');
+  }
+
+  // Init
+  setActive('a');
+</script>
+
 </body>
 </html>
